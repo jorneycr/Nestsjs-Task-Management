@@ -1,39 +1,45 @@
+import { TasksRepository } from './tasks.repository';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Body, Injectable, NotFoundException } from '@nestjs/common';
-import { Task, TaskStatus } from './task.model';
-import { v4 as uuid } from 'uuid';
+import { TaskStatus } from './task-status.enum';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './task.entity';
 
 @Injectable()
 export class TasksService {
-  private tasks: Task[] = [];
 
-  getAllTasks(): Task[] {
-    return this.tasks;
-  }
+  constructor(
+    @InjectRepository(TasksRepository)
+    private tasksRepository: TasksRepository,
+  ) { }
 
-  getTasksWithFilters(filterDto: GetTasksFilterDto): Task[] {
-    const { status, search } = filterDto;
+  // getAllTasks(): Task[] {
+  //   return this.tasks;
+  // }
 
-    let tasks = this.getAllTasks();
+  // getTasksWithFilters(filterDto: GetTasksFilterDto): Task[] {
+  //   const { status, search } = filterDto;
 
-    if (status) {
-      tasks = tasks.filter(tasks => tasks.status === status);
-    }
-    if (search) {
-      tasks = tasks.filter(task => {
-        if (task.title.includes(search) || task.description.includes(search)) {
-          return true;
-        }
-        return false;
-      })
-    }
+  //   let tasks = this.getAllTasks();
 
-    return tasks;
-  }
+  //   if (status) {
+  //     tasks = tasks.filter(tasks => tasks.status === status);
+  //   }
+  //   if (search) {
+  //     tasks = tasks.filter(task => {
+  //       if (task.title.includes(search) || task.description.includes(search)) {
+  //         return true;
+  //       }
+  //       return false;
+  //     })
+  //   }
 
-  getTaskById(id: string): Task {
-    const found = this.tasks.find((task) => task.id === id);
+  //   return tasks;
+  // }
+
+  async getTaskById(id: string): Promise<Task> {
+    const found = await this.tasksRepository.findOne(id);
 
     if (!found) {
       throw new NotFoundException(`Task with ID ${id} not found!`);
@@ -42,31 +48,31 @@ export class TasksService {
     return found;
   }
 
-  createTask(@Body() createTaskDto: CreateTaskDto): Task {
+  // createTask(@Body() createTaskDto: CreateTaskDto): Task {
 
-    const { title, description } = createTaskDto;
+  //   const { title, description } = createTaskDto;
 
-    const task: Task = {
-      id: uuid(),
-      title,
-      description,
-      status: TaskStatus.OPEN
-    }
+  //   const task: Task = {
+  //     id: uuid(),
+  //     title,
+  //     description,
+  //     status: TaskStatus.OPEN
+  //   }
 
-    this.tasks.push(task);
+  //   this.tasks.push(task);
 
-    return task;
-  }
+  //   return task;
+  // }
 
-  deleteTaskById(id: string): void {
-    const found = this.getTaskById(id);
-    this.tasks = this.tasks.filter((task) => task.id !== found.id);
-  }
+  // deleteTaskById(id: string): void {
+  //   const found = this.getTaskById(id);
+  //   this.tasks = this.tasks.filter((task) => task.id !== found.id);
+  // }
 
-  updateTaskStatus(id: string, status: TaskStatus) {
-    const task = this.getTaskById(id);
-    task.status = status;
-    return task;
-  }
+  // updateTaskStatus(id: string, status: TaskStatus) {
+  //   const task = this.getTaskById(id);
+  //   task.status = status;
+  //   return task;
+  // }
 
 }
