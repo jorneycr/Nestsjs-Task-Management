@@ -14,10 +14,4 @@ export class Url {
     @Column()
     shortUrl: string;
 
-    @Column({
-        type: Date,
-        default: Date.now()
-    })
-    date: Date;
-
 }
