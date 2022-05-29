@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "cbf39f31-5841-4a1e-a4e0-cd8562aca07a",
+		"name": "Generate Short URL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Short URL",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"longUrl\":\"https://docs.nestjs.com/controllers\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/url",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"url"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get URL",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/url/gW3w3H",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"url",
+						"gW3w3H"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
