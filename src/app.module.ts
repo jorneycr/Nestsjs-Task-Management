@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [TasksModule, UrlModule, TypeOrmModule.forRoot({
     type: 'postgres',
     host: 'localhost',
-    port: 49155,
+    port: 49153,
     username: 'postgres',
     password: 'postgrespw',
     database: 'task-management',
