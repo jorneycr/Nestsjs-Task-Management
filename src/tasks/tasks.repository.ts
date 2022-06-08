@@ -1,4 +1,4 @@
-import { User } from "src/auth/user.entity";
+import { User } from "../auth/user.entity";
 import { EntityRepository, Repository } from "typeorm";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { Task } from "./task.entity";
