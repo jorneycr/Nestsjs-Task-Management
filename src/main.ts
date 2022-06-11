@@ -10,6 +10,9 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor());
   const port = 3000;
   await app.listen(port);
-  logger.log(`Application listening on port ${port}`)
+  path_url = await app.getUrl();
+  logger.log(`Application listening on port ${port}`);
 }
+export let path_url = '';
+
 bootstrap();

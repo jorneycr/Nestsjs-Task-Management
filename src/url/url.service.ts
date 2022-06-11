@@ -5,6 +5,9 @@ import ShortUniqueId from 'short-unique-id';
 import { Url } from "./url.entity";
 import { CreateUrlDto } from "./dto/create-url.dto";
 import { Response } from "express";
+import { path_url } from "../main";
+import { isUri } from "valid-url";
+
 
 @Injectable()
 export class UrlService {
@@ -15,32 +18,25 @@ export class UrlService {
 
     async createUrl(createUrlDto: CreateUrlDto): Promise<Url> {
 
-        const { longUrl } = createUrlDto;
-        const baseUrl = "http:localhost:3000";
-
-        const validUrl: RegExp = /^((https|http):\/\/)?(www.)?[a-z0-9]+(.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(?:[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/gm;
-
-        if (validUrl.test(baseUrl)) throw new HttpException("Invalid base URL", HttpStatus.BAD_REQUEST)
-
+        let { longUrl, shortUrl, urlCode } = createUrlDto; 
+        
         const uid = new ShortUniqueId();
 
-        createUrlDto.urlCode = uid();
+        if (isUri(longUrl)) {
 
-        if (validUrl.test(longUrl)) {
             try {
 
-                const urlGet = this.urlRepositoy.createQueryBuilder('url');
-                urlGet.andWhere('url.longUrl = :longUrl', { longUrl: longUrl });
-
-                const url = await urlGet.getOne();
+                const url = await this.urlRepositoy.createQueryBuilder("url").where('url.longUrl = :longUrl', { longUrl: longUrl }).getOne();
 
                 if (!url) {
-                    createUrlDto.shortUrl = `${baseUrl}/url/${createUrlDto.urlCode}`;
+                    urlCode = uid();
+
+                    shortUrl = `${path_url}/url/${urlCode}`;
 
                     const urlSave = this.urlRepositoy.create({
-                        urlCode: createUrlDto.urlCode,
-                        longUrl: createUrlDto.longUrl,
-                        shortUrl: createUrlDto.shortUrl,
+                        urlCode,
+                        longUrl,
+                        shortUrl,
                     })
                     await this.urlRepositoy.save(urlSave);
 
@@ -49,6 +45,7 @@ export class UrlService {
                 } else {
                     return url
                 }
+                
             } catch (error) {
                 console.log(error);
                 throw new HttpException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,7 +55,6 @@ export class UrlService {
         }
     }
 
-    // TODO
     async addUrl(code: string, @Res() res: Response): Promise<Url> {
 
         const url = await this.urlRepositoy.createQueryBuilder("url").where("url.urlCode = :urlCode", { urlCode: code }).getOne();
